@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  app:
+    image: maven:3.9.6-eclipse-temurin-17 # Usa la versión de Java que necesites (17 o 21 son comunes)
+    container_name: natillera_java_dev
+    working_dir: /app
+    volumes:
+      # Vincula la carpeta local al directorio /app dentro del contenedor
+      - .:/app
+      # Volumen para guardar las dependencias de Maven y no descargarlas cada vez
+      - maven-repo:/root/.m2
+    ports:
+      - "8080:8080" # Puerto de Spring Boot
+      - "5005:5005" # Puerto para realizar Debug desde tu IDE
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    # Comando para levantar la aplicación en modo desarrollo con soporte para Debug
+    command: mvn spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    tty: true
+    # depends_on:
+    #   - db # Descomenta esto si usas base de datos
+
+  # Opcional: Base de datos para tu proyecto (PostgreSQL como ejemplo)
+  # db:
+  #   image: postgres:15
+  #   container_name: natillera_db
+  #   environment:
+  #     POSTGRES_USER: db_user
+  #     POSTGRES_PASSWORD: db_password
+  #     POSTGRES_DB: natillera_db
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  maven-repo:
+  # postgres-data:
