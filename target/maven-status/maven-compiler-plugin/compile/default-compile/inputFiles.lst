@@ -1,2 +1,6 @@
 /app/src/main/java/com/example/natillera_java/Home.java
+/app/src/main/java/com/example/natillera_java/controllers/UserMongoController.java
+/app/src/main/java/com/example/natillera_java/repositories/UserRepository.java
+/app/src/main/java/com/example/natillera_java/controllers/HelloRestController.java
 /app/src/main/java/com/example/natillera_java/NatilleraJavaApplication.java
+/app/src/main/java/com/example/natillera_java/domain/user.java

@@ -1,9 +1,28 @@
-version: '3.8'
-
 services:
+
+  mongodb:
+    image: mongo:8.0.8
+    container_name: natillera-mongodb
+    restart: unless-stopped
+    environment:
+    - MONGO_INITDB_ROOT_USERNAME=root
+    - MONGO_INITDB_ROOT_PASSWORD=root27017
+    - MONGO_INITDB_DATABASE=natillera-java
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb-volume:/data/db
+      - ./init.js:/docker-entrypoint-initdb.d/init.js:ro
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh mongodb:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - natillera-java-network
   app:
     image: maven:3.9.6-eclipse-temurin-17 # Usa la versión de Java que necesites (17 o 21 son comunes)
-    container_name: natillera_java_dev
+    container_name: natillera-java-app
     working_dir: /app
     volumes:
       # Vincula la carpeta local al directorio /app dentro del contenedor
@@ -11,29 +30,26 @@ services:
       # Volumen para guardar las dependencias de Maven y no descargarlas cada vez
       - maven-repo:/root/.m2
     ports:
-      - "8080:8080" # Puerto de Spring Boot
+      - "8081:8081" # Puerto de Spring Boot
       - "5005:5005" # Puerto para realizar Debug desde tu IDE
     environment:
       - SPRING_PROFILES_ACTIVE=dev
     # Comando para levantar la aplicación en modo desarrollo con soporte para Debug
     command: mvn spring-boot:run -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     tty: true
-    # depends_on:
-    #   - db # Descomenta esto si usas base de datos
-
-  # Opcional: Base de datos para tu proyecto (PostgreSQL como ejemplo)
-  # db:
-  #   image: postgres:15
-  #   container_name: natillera_db
-  #   environment:
-  #     POSTGRES_USER: db_user
-  #     POSTGRES_PASSWORD: db_password
-  #     POSTGRES_DB: natillera_db
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - postgres-data:/var/lib/postgresql/data
+    depends_on:
+      - mongodb
+    networks:
+      - natillera-java-network
+  
+  
 
 volumes:
   maven-repo:
-  # postgres-data:
+  mongodb-volume:
+   external: true
+
+networks: 
+  natillera-java-network:
+    driver: bridge
+  
