@@ -1,21 +1,21 @@
-package com.example.natillera_java.domain;
+package com.example.natillera_java.domain.mongo;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 //Clase POJO para el usuario, con sus atributos y métodos getters y setters
 @Document(collection = "users")
-public class user {
+public class User {
     @Id
     private String id;
     private String name;
     private String email;
     private String password;
 
-    public user() {
+    public User() {
     }
 
-    public user(String id,String name, String email, String password) {
+    public User(String id,String name, String email, String password) {
         this.id = id;
         this.name = name;
         this.email = email;

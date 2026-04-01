@@ -5,9 +5,9 @@ services:
     container_name: natillera-mongodb
     restart: unless-stopped
     environment:
-    - MONGO_INITDB_ROOT_USERNAME=root
-    - MONGO_INITDB_ROOT_PASSWORD=root27017
-    - MONGO_INITDB_DATABASE=natillera-java
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root27017
+      - MONGO_INITDB_DATABASE=natillera-java
     ports:
       - '27017:27017'
     volumes:
@@ -15,6 +15,25 @@ services:
       - ./init.js:/docker-entrypoint-initdb.d/init.js:ro
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh mongodb:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - natillera-java-network
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: natillera-sqlserver
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong!Passw0rd
+    ports:
+      - '1433:1433'
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrong!Passw0rd -Q "SELECT 1" || exit 1
       interval: 30s
       timeout: 10s
       retries: 3
@@ -41,15 +60,15 @@ services:
       - mongodb
     networks:
       - natillera-java-network
-  
-  
 
 volumes:
   maven-repo:
+    external: true
   mongodb-volume:
-   external: true
+    external: true
+  sqlserver-data:
+    external: true
 
-networks: 
+networks:
   natillera-java-network:
     driver: bridge
-  

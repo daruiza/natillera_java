@@ -1,6 +1,13 @@
-/app/src/main/java/com/example/natillera_java/Home.java
 /app/src/main/java/com/example/natillera_java/controllers/UserMongoController.java
-/app/src/main/java/com/example/natillera_java/repositories/UserRepository.java
-/app/src/main/java/com/example/natillera_java/controllers/HelloRestController.java
+/app/src/main/java/com/example/natillera_java/domain/mongo/Account.java
+/app/src/main/java/com/example/natillera_java/repositories/sqlserver/UserRepository.java
+/app/src/main/java/com/example/natillera_java/repositories/sqlserver/AccountRepository.java
+/app/src/main/java/com/example/natillera_java/repositories/mongo/UserRepository.java
 /app/src/main/java/com/example/natillera_java/NatilleraJavaApplication.java
-/app/src/main/java/com/example/natillera_java/domain/user.java
+/app/src/main/java/com/example/natillera_java/domain/sqlserver/User.java
+/app/src/main/java/com/example/natillera_java/Home.java
+/app/src/main/java/com/example/natillera_java/domain/mongo/User.java
+/app/src/main/java/com/example/natillera_java/repositories/mongo/AccountRepository.java
+/app/src/main/java/com/example/natillera_java/domain/sqlserver/Account.java
+/app/src/main/java/com/example/natillera_java/controllers/HelloRestController.java
+/app/src/main/java/com/example/natillera_java/controllers/UserSqlServerController.java

@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +17,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.natillera_java.domain.mongo.User;
-import com.example.natillera_java.repositories.mongo.AccountRepository;
-import com.example.natillera_java.repositories.mongo.UserRepository;
+import com.example.natillera_java.domain.sqlserver.User;
+import com.example.natillera_java.repositories.sqlserver.AccountRepository;
+import com.example.natillera_java.repositories.sqlserver.UserRepository;
 
 @RestController
-@RequestMapping("/api/mongo/users")
-public class UserMongoController {
+@RequestMapping("/api/sqlserver/users")
+public class UserSqlServerController {
 
     @Autowired
     private UserRepository userRepository;
@@ -53,44 +50,28 @@ public class UserMongoController {
 
     // Obtener usuario por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getUserById(@PathVariable String id) {
+    public ResponseEntity<Map<String, Object>> getUserById(@PathVariable Integer id) {
         Optional<User> user = userRepository.findById(id);
         return user.map(u -> ResponseEntity.ok(buildUserResponse(u)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    private String encryptPassword(String password) {
-        if (password == null) return null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(password.getBytes());
-            return Base64.getEncoder().encodeToString(hash);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error encriptando el password", e);
-        }
-    }
-
     // Crear nuevo usuario
     @PostMapping
     public User createUser(@RequestBody User user) {
-        if (user.getPassword() != null) {
-            user.setPassword(encryptPassword(user.getPassword()));
-        }
         return userRepository.save(user);
     }
 
     // Actualizar usuario
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User userDetails) {
+    public ResponseEntity<User> updateUser(@PathVariable Integer id, @RequestBody User userDetails) {
         Optional<User> optionalUser = userRepository.findById(id);
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setName(userDetails.getName());
             user.setEmail(userDetails.getEmail());
-            if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
-                user.setPassword(encryptPassword(userDetails.getPassword()));
-            }
+            user.setPassword(userDetails.getPassword());
             return ResponseEntity.ok(userRepository.save(user));
         }
         return ResponseEntity.notFound().build();
@@ -98,7 +79,7 @@ public class UserMongoController {
 
     // Eliminar usuario
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
             return ResponseEntity.noContent().build();
