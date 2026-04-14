@@ -14,7 +14,7 @@ services:
       - mongodb-volume:/data/db
       - ./init.js:/docker-entrypoint-initdb.d/init.js:ro
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh mongodb:27017/test --quiet
+      test: echo 'db.runCommand("ping").ok' | mongosh mongodb:27017/natillera-java --quiet
       interval: 30s
       timeout: 10s
       retries: 3

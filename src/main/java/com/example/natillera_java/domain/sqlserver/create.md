@@ -17,3 +17,4 @@ CREATE TABLE accounts (
     REFERENCES users(id) 
     ON DELETE CASCADE                     -- Si se borra el usuario, se borran sus cuentas
 );
+
